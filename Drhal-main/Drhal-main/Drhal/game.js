@@ -1,6 +1,6 @@
 var config = {
-    width: 700,
-    height: 700,
+    width: 1000,
+    height: 900,
     backgroundColor: 0x000000,
     scene: [Scene1],
     physics: {
@@ -11,17 +11,25 @@ var config = {
     }
   }
  
-  var playerx = config.width/2;
-  var playery = config.height/2;
-  var player;
-  var stageT;
-  var scoreT;
-  var keys;
-  var sprt;
-  var projectile = false;
-  var numSprt = 1;
-  var score = 0;
-  var actScore = 0;
+  let player;
+
+  let playerSettings = {
+    playerY: config.height/2,
+    playerX: config.width/2,
+    playerHP: 10,
+    isInv: false,
+    invDuration: 1301, 
+    invTimer: 0
+  };
+
+  let stageT;
+  let scoreT;
+  let keys;
+  let sprt;
+  let projectile = false;
+  let numSprt = 1;
+  let score = 0;
+  let actScore = 0;
   
   var game = new Phaser.Game(config);
 

@@ -9,6 +9,9 @@ class Scene1 extends Phaser.Scene {
 
     create() {
 
+        //stage and score display
+        stageT = this.add.text(20, 40, 'Stage', { fontSize: '24px', fill: '#ffffff' }).setDepth(1);
+        scoreT = this.add.text(20, 70, 'Score', { fontSize: '24px', fill: '#ffffff' }).setDepth(1);
         this.input.on('pointerdown', function (pointer) {
           if (pointer.leftButtonDown()) {
               // Create a projectile at the mouse pointer position
@@ -16,16 +19,11 @@ class Scene1 extends Phaser.Scene {
           }
         }, this);
 
-
-        //stage and score display
-        stageT = this.add.text(20, 40, 'Test');
-        scoreT = this.add.text(20, 60, 'Test');
-
         //create player movment keys
         keys = this.input.keyboard.addKeys("W,A,S,D");
 
         //create player add atributes
-        player = this.physics.add.sprite(playerx, playery, "sprt"); 
+        player = this.physics.add.sprite(playerSettings.playerX, playerSettings.playerY, "temp"/*"sprt"*/); 
         player.displayWidth = 50;
         player.displayHeight = 50;  
 
@@ -45,7 +43,8 @@ class Scene1 extends Phaser.Scene {
           this.sprts.add(sprt);
 
           //on overlap do this
-          this.physics.add.overlap(projectile, sprt, this.handleCollision, null, this);
+          this.physics.add.overlap(projectile, sprt, this.projectileSpriteCollision, null, this);
+          this.physics.add.overlap(player, sprt, this.playerSpriteCollision, null, this);
 
           //collide world bounds
           sprt.setCollideWorldBounds(true);
@@ -56,21 +55,45 @@ class Scene1 extends Phaser.Scene {
     createProjectile(x, y) {
       // Create a projectile sprite at the specified position
       projectile = this.physics.add.sprite(x, y, 'projectile');
+      projectile.displayHeight = 20;
+      projectile.displayWidth = 20;
+      
+      //send projectile to mouse click
       let angle = Phaser.Math.Angle.Between(player.x, player.y, this.input.x, this.input.y);
       this.physics.moveTo(projectile, this.input.x, this.input.y, 500);
-    }
 
-    handleCollision(projectile, sprt) {
-        // Destroy the sprite upon collision with the player
+    } 
+
+    projectileSpriteCollision(projectile, sprt) {
+        // Destroy the sprite and projectile upon collision with the projectile
+        projectile.destroy();
         sprt.destroy();
+
+        //incrament score
         score++;
         actScore += 100;
     }
 
+    playerSpriteCollision(player, sprt){
+      if (!playerSettings.isInv) {
+        playerSettings.playerHP--;
+        playerSettings.isInv = true;
+        playerSettings.invTimer = this.time.now + playerSettings.invDuration;
+      }
+    }
+
     update() {
 
-      stageT.setText("Stage " + numSprt);
-      scoreT.setText("Score " + actScore);
+
+      console.log(playerSettings.playerHP);
+      if (playerSettings.isInv && this.time.now > playerSettings.invTimer) {
+        playerSettings.isInv = false;
+      }
+      
+
+      //text for score and stage
+      stageT.setText("Stage: " + numSprt);
+      scoreT.setText("Score: " + actScore);
 
         if(score >= numSprt){
           numSprt++;
@@ -85,7 +108,8 @@ class Scene1 extends Phaser.Scene {
                 this.sprts.add(sprt);
     
                 //on overlap do this
-                this.physics.add.overlap(projectile, sprt, this.handleCollision, null, this);
+                this.physics.add.overlap(projectile, sprt, this.projectileSpriteCollision, null, this);
+                this.physics.add.overlap(player, sprt, this.playerSpriteCollision, null, this);
     
                 //collide world bounds
                 sprt.setCollideWorldBounds(true);
@@ -99,7 +123,7 @@ class Scene1 extends Phaser.Scene {
 
         this.sprts.children.iterate(function (sprt) {
           this.physics.moveTo(sprt, player.x, player.y, 50);
-          this.physics.add.overlap(projectile, sprt, this.handleCollision, null, this);
+          this.physics.add.overlap(projectile, sprt, this.projectileSpriteCollision, null, this);
           sprt.setCollideWorldBounds(true);
       }, this);
         
