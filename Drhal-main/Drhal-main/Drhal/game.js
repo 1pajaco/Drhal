@@ -16,7 +16,7 @@ var config = {
   let playerSettings = {
     playerY: config.height/2,
     playerX: config.width/2,
-    playerHP: 10,
+    playerHP: 5,
     isInv: false,
     invDuration: 1301, 
     invTimer: 0
@@ -24,6 +24,7 @@ var config = {
 
   let stageT;
   let scoreT;
+  let playerHP;
   let keys;
   let sprt;
   let projectile = false;
