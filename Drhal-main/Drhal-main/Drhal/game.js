@@ -22,6 +22,7 @@ var config = {
     invTimer: 0
   };
 
+  let angle;
   let stageT;
   let scoreT;
   let playerHP;

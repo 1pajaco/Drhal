@@ -10,9 +10,9 @@ class Scene1 extends Phaser.Scene {
     create() {
 
         //stage and score display
-        stageT = this.add.text(20, 40, 'Stage', { fontSize: '24px', fill: '#ffffff' }).setDepth(1);
-        scoreT = this.add.text(20, 70, 'Score', { fontSize: '24px', fill: '#ffffff' }).setDepth(1);
-        playerHP = this.add.text(800, 60, 'HP', { fontSize: '24px', fill: '#ffffff' }).setDepth(1);
+        stageT = this.add.text(20, 40, 'Stage', { fontSize: '24px', fill: '#FFFFFF' }).setDepth(1);
+        scoreT = this.add.text(20, 70, 'Score', { fontSize: '24px', fill: '#FFFFFF' }).setDepth(1);
+        playerHP = this.add.text(800, 60, 'HP', { fontSize: '24px', fill: '#FFFFFF' }).setDepth(1);
         this.input.on('pointerdown', function (pointer) {
           if (pointer.leftButtonDown()) {
               // Create a projectile at the mouse pointer position
@@ -37,8 +37,7 @@ class Scene1 extends Phaser.Scene {
           //create dummy sprite
           sprt = this.physics.add.sprite(200, 200, "kek");
 
-          //set random poz
-          sprt.setRandomPosition(0, 0, game.width, game.height);
+          this.randomPozSprt();
 
           //add to group
           this.sprts.add(sprt);
@@ -50,7 +49,6 @@ class Scene1 extends Phaser.Scene {
           //collide world bounds
           sprt.setCollideWorldBounds(true);
       }
-
     }
 
     createProjectile(x, y) {
@@ -60,7 +58,7 @@ class Scene1 extends Phaser.Scene {
       projectile.displayWidth = 20;
       
       //send projectile to mouse click
-      let angle = Phaser.Math.Angle.Between(player.x, player.y, this.input.x, this.input.y);
+      angle = Phaser.Math.Angle.Between(player.x, player.y, this.input.x, this.input.y);
       this.physics.moveTo(projectile, this.input.x, this.input.y, 500);
 
     } 
@@ -83,7 +81,37 @@ class Scene1 extends Phaser.Scene {
       }
     }
 
+    randomPozSprt(){
+      let st = Math.floor(Math.random() * 4) + 1;
+    
+      //set random poz
+      switch(st){
+         case 1:
+           sprt.setRandomPosition(0, 0, 0, game.height);
+         break;
+
+         case 2:
+           sprt.setRandomPosition(0, 0, game.width, 0);
+         break;
+
+         case 3:
+           sprt.setRandomPosition(1000, 0, game.width, game.height);
+         break;
+
+          case 4:
+            sprt.setRandomPosition(0, 900, 1000, 900);
+          break;
+      }
+
+      //this.cameras.main.setSize(500,500);
+    }
+
     update() {
+
+      //this.cameras.main.startFollow(player);
+      // stageT.setPosition(this.cameras.main.scrollX + 20, this.cameras.main.scrollY + 40);
+      // scoreT.setPosition(this.cameras.main.scrollX + 20, this.cameras.main.scrollY + 70);
+      // playerHP.setPosition(this.cameras.main.scrollX + 400, this.cameras.main.scrollY + 60);
 
       console.log(playerSettings.playerHP);
       if (playerSettings.isInv && this.time.now > playerSettings.invTimer) {
@@ -100,23 +128,11 @@ class Scene1 extends Phaser.Scene {
             for(let i = 0; i < numSprt; i++){
                 //create dummy sprite
                 sprt = this.physics.add.sprite(0, 0, "kek");
-    
-                //set random poz
-                // switch(i){
-                //   case 1:
-                //     sprt.setRandomPosition(0, 0, 0, game.height);
-                //   break;
 
-                //   case 2:
-                //     sprt.setRandomPosition(0, 0, game.width, 0);
-                //   break;
+                this.randomPozSprt();
 
-                //   case 3:
-                //     sprt.setRandomPosition(0, 0, game.width, game.height);
-                //   break;
-                //   }
                 //set random position of sprite
-                sprt.setRandomPosition(0, 0, game.width, game.height);
+                //sprt.setRandomPosition(0, 0, game.width, game.height);
     
                 //add to group
                 this.sprts.add(sprt);
@@ -149,10 +165,10 @@ class Scene1 extends Phaser.Scene {
           player.setVelocityY(-300);
         }
         if (keys.S.isDown) {
-          player.setVelocity(300);
+          player.setVelocityY(300);
         }
         if (keys.D.isDown) {
-          player.setVelocity(300);
+          player.setVelocityX(300);
         }
 
         //Move sprt to player
